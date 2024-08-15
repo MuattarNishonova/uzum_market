@@ -12,6 +12,7 @@ class Product_modelModelAdmin(ModelAdmin):
     # inlines = [Product_imageStackedInline, ]
     # inlines = (Product_imageStackedInline, )
     inlines = Product_imageStackedInline, 
+    list_display = 'name', 'category','price','quantity'
 
 @register(Category)
 class CategoryModelAdmin(ModelAdmin):
