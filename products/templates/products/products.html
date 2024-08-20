@@ -20,6 +20,8 @@
                         <p class="card-text">{{ product.name }}</p>
                     </div>
                   </div>
+
+                  <a href="{% url 'product-detail' product.id %}">Batafsil...</a>
                 </div>
              {% endfor %}
         </div>

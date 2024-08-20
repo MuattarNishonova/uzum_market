@@ -27,8 +27,14 @@ class Product_model(Model):
     def first_image(self):
         return self.images.all().first()
     
-    
-    
+
+
+    @property
+    def get_price(self):
+        if self.discount:
+            price= self.price - (self.price*self.discount)/100
+            return price
+        return self.price
 
 class Product_image(Model):
     image = ImageField(upload_to='products')
