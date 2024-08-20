@@ -23,9 +23,18 @@ class Product_model(Model):
     def __str__(self) -> str:
         return   f"{self.name}"
     
+    @property
+    def first_image(self):
+        return self.images.all().first()
+    
     
     
 
 class Product_image(Model):
     image = ImageField(upload_to='products')
     product = ForeignKey(Product_model,on_delete=CASCADE,related_name = 'images')   
+
+
+class Color(Model):
+    name = CharField(max_length=25)
+    product = ForeignKey('products.Product_model',CASCADE,related_name="colors")
