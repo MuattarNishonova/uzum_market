@@ -14,10 +14,14 @@
                   <div class="card" >
                     <img src="{{ product.first_image.image.url }}" class="card-img-top" alt="...">
                     <div class="card-body">
-                    {% for color in product.color.all %}
+                    {% for color in product.colors.all %}
                         <p>{{ color.name }}</p>
-                        {% endfor %}
+                    {% endfor %}
                         <p class="card-text">{{ product.name }}</p>
+                        <button class="btn btn-primary add-to-cart" data-product-id="{{ product.id }}">
+                          Add to Cart
+                      </button>
+
                     </div>
                   </div>
 
@@ -27,5 +31,45 @@
         </div>
       </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src=”https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js”></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.add-to-cart').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var csrftoken = '{{ csrf_token }}'
+
+                    console.log('bosildi');
+                    
+                    const productId = this.getAttribute('data-product-id');
+
+                    fetch('/add_to_card/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken, 
+                        },
+                        body: JSON.stringify({
+                            product_id: productId,
+                            quantity: 1 
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('Product added to cart successfully!');
+                            } else {
+                                alert('There was an error adding the product to the cart.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+    </script>
+
+    
+
 </body>
 </html>
