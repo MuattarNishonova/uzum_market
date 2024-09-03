@@ -1,9 +1,10 @@
 import json
 
 from django.shortcuts import render
-from .models import Product_model
+from .models import Product_model,Cart,CartItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_list_or_404
 
 
 
@@ -20,9 +21,18 @@ def product_detail(request,id):
     return render (request,"products/product-detail.html",context=context)
 
 
-@csrf_exempt
 def add_to_card(request):
     if request.method == 'POST':
         print(request.POST)
+        data = json.loads(request.POST)
+        product_id = data.get('product_id')
+        quantity = data.get('quantity')
+
+        product = get_list_or_404(Product_model, id= product_id)
+        # print(request.user)
+        cart , created = Cart.objects.get_or_create(user=request.user, is_active=True)
+
+        cart_item , created = CartItem.objects.get_or_create(cart=cart, product=product)
+
     return JsonResponse(data={'status':'Okey'})
 
