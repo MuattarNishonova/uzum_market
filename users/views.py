@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login,logout
+ 
 
 from .forms import UserForm
 
@@ -39,4 +40,8 @@ def login_view(request):
         
         return render (request,'users/login.html',context={'boshqacha_login': form})
         
-        
+
+
+def logout_view(request):
+      logout(request)
+      return redirect('product_urls')

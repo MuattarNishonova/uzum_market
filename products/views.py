@@ -1,10 +1,13 @@
 import json
 
-from django.shortcuts import render
+
 from .models import Product_model,Cart,CartItem
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404,redirect,render
+from django.contrib.auth.models import AnonymousUser
+from django.contrib import messages
+
 
 
 
@@ -47,3 +50,21 @@ def add_to_card(request):
 
     return JsonResponse(data={'status':'error'})
 
+
+def user_cart(request):
+    if request.method == "GET":
+        user = request.user
+
+        if isinstance(user, AnonymousUser):
+            messages.info(request, "Oldin login qilgin {}")
+            return redirect("users:login")
+
+        cart = Cart.objects.get(user=user, is_active=True)
+        context = {
+            'cart': cart
+        }
+
+        return render(
+            request, 
+            template_name='products/user_cart.html', 
+            context=context)
