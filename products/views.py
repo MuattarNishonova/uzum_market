@@ -68,3 +68,18 @@ def user_cart(request):
             request, 
             template_name='products/user_cart.html', 
             context=context)
+    
+
+
+def delete_cart(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        cart_item_id = data.get('cart_item_id')
+        cart_item = CartItem.objects.get(id=cart_item_id)
+        cart_item.delete()
+        return JsonResponse(data={'status':'okey'})
+        
+
+    return JsonResponse(data={'status':'error'})
+
+

@@ -8,7 +8,61 @@
     {% for item in cart.items.all %}
         <h1>{{item}}</h1>
         <p>{{ item.quantity }}</p>
+        <img src="{{ product.first_image.image.url }}" class="card-img-top" alt="...">
+        
+        <!-- <button class="btn">
+            <a href="{% url 'delete-cart' %}">
+                <i class="bi bi-trash3"></i>
+            </a>
+          </button> -->
+          <button class="btn btn-danger delete-cart-item" cart-item-id="{{ item.id }}">delete</button>
+            
+        
     {% endfor %}
 
 
+{% endblock %}
+
+
+
+
+{% block jscode %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <script src=”https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js”></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-cart-item').forEach(function (button) {
+                button.addEventListener('click', function () {
+
+                    var csrftoken = '{{ csrf_token }}';
+                    const cart_item_id = this.getAttribute('cart-item-id');
+
+                    console.log(cart_item_id);
+
+                    fetch("{% url 'delete-cart' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken, 
+                        },
+                        body: JSON.stringify({
+                            cart_item_id: cart_item_id,
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status == 'okey') {
+                                location.reload()
+                            } else {
+                                alert('There was an error deleting the product from the cart.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+    </script>
 {% endblock %}
