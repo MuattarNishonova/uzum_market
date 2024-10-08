@@ -1,4 +1,5 @@
-from django.db.models import Model,CharField,TextField,PositiveIntegerField,ImageField,ForeignKey,CASCADE,FloatField,DateTimeField,BooleanField,DecimalField
+from django.db.models import Model,CharField,TextField,PositiveIntegerField,ImageField,ForeignKey,CASCADE,FloatField,DateTimeField,BooleanField,DecimalField,SlugField
+from django.template.defaultfilters import slugify
 
 # Create your models here.
 
@@ -19,6 +20,17 @@ class Product_model(Model):
     description = TextField()
     quantity = PositiveIntegerField(default=1)
     category = ForeignKey(Category,on_delete=CASCADE,related_name='products')
+    slug = SlugField(unique=True,blank=True,null=True)
+
+
+
+
+    def save(self, *args,**kwargs):
+        self.slug = slugify(self.name)
+        
+        super().save()
+
+
 
     def __str__(self) -> str:
         return   f"{self.name}"

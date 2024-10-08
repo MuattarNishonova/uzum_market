@@ -7,23 +7,38 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404,redirect,render
 from django.contrib.auth.models import AnonymousUser
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+
+
+from users.models import CustomUser,UserTypeChoise
+
+
+
 
 
 
 
 def Product_views(request):
     products = Product_model.objects.all()
+    search_q = request. GET. get('q', "")
+
+    if search_q:
+        products = products.filter(
+            Q(name__icontains=search_q) | Q(description__icontains=search_q)
+        )
+    
     return render (request,"products/products.html",context={'products': products})
 
 # Create your views here.
-def product_detail(request,id):
-    product = Product_model.objects.get(id=id)
+def product_detail(request,slug):
+    product = Product_model.objects.get(slug=slug)
     context = {
         'product': product
     }
     return render (request,"products/product-detail.html",context=context)
 
-
+@login_required
 def add_to_card(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -53,11 +68,17 @@ def add_to_card(request):
 
 def user_cart(request):
     if request.method == "GET":
-        user = request.user
+        user: CustomUser = request.user
+        
+
+        
 
         if isinstance(user, AnonymousUser):
             messages.info(request, "Oldin login qilgin {}")
             return redirect("users:login")
+        
+        if user.user_type == UserTypeChoise.REGULAR:
+            pass
 
         cart = Cart.objects.get(user=user, is_active=True)
         context = {
