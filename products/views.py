@@ -9,6 +9,9 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.core.mail import send_mail
+from django.urls import reverse
+
 
 
 from users.models import CustomUser,UserTypeChoise
@@ -28,7 +31,7 @@ def Product_views(request):
             Q(name__icontains=search_q) | Q(description__icontains=search_q)
         )
     
-    return render (request,"products/products.html",context={'products': products})
+    return render (request,"products/product-grid.html",context={'products': products})
 
 # Create your views here.
 def product_detail(request,slug):
@@ -104,3 +107,12 @@ def delete_cart(request):
     return JsonResponse(data={'status':'error'})
 
 
+
+def pochts_junat(request):
+    send_mail(
+        'Back',
+        "San bu emailni birinchi bolib qabul qilding",
+        'nisonovamuattar@gmail.com',
+        ['nishonovamuattar39@gmail.com']
+    )
+    return redirect(reverse('product_urls'))
